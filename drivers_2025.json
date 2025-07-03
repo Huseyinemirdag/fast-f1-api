@@ -1,0 +1,149 @@
+{
+  "season": 2025,
+  "drivers": [
+    {
+      "number": "1",
+      "name": "Max Verstappen",
+      "abbreviation": "VER",
+      "team": "Red Bull Racing"
+    },
+    {
+      "number": "10",
+      "name": "Pierre Gasly",
+      "abbreviation": "GAS",
+      "team": "Alpine"
+    },
+    {
+      "number": "12",
+      "name": "Andrea Kimi Antonelli",
+      "abbreviation": "ANT",
+      "team": "Mercedes"
+    },
+    {
+      "number": "12",
+      "name": "Kimi Antonelli",
+      "abbreviation": "ANT",
+      "team": "Mercedes"
+    },
+    {
+      "number": "14",
+      "name": "Fernando Alonso",
+      "abbreviation": "ALO",
+      "team": "Aston Martin"
+    },
+    {
+      "number": "16",
+      "name": "Charles Leclerc",
+      "abbreviation": "LEC",
+      "team": "Ferrari"
+    },
+    {
+      "number": "18",
+      "name": "Lance Stroll",
+      "abbreviation": "STR",
+      "team": "Aston Martin"
+    },
+    {
+      "number": "22",
+      "name": "Yuki Tsunoda",
+      "abbreviation": "TSU",
+      "team": "Red Bull Racing"
+    },
+    {
+      "number": "22",
+      "name": "Yuki Tsunoda",
+      "abbreviation": "TSU",
+      "team": "Racing Bulls"
+    },
+    {
+      "number": "23",
+      "name": "Alexander Albon",
+      "abbreviation": "ALB",
+      "team": "Williams"
+    },
+    {
+      "number": "27",
+      "name": "Nico Hulkenberg",
+      "abbreviation": "HUL",
+      "team": "Kick Sauber"
+    },
+    {
+      "number": "30",
+      "name": "Liam Lawson",
+      "abbreviation": "LAW",
+      "team": "Red Bull Racing"
+    },
+    {
+      "number": "30",
+      "name": "Liam Lawson",
+      "abbreviation": "LAW",
+      "team": "Racing Bulls"
+    },
+    {
+      "number": "31",
+      "name": "Esteban Ocon",
+      "abbreviation": "OCO",
+      "team": "Haas F1 Team"
+    },
+    {
+      "number": "4",
+      "name": "Lando Norris",
+      "abbreviation": "NOR",
+      "team": "McLaren"
+    },
+    {
+      "number": "43",
+      "name": "Franco Colapinto",
+      "abbreviation": "COL",
+      "team": "Alpine"
+    },
+    {
+      "number": "44",
+      "name": "Lewis Hamilton",
+      "abbreviation": "HAM",
+      "team": "Ferrari"
+    },
+    {
+      "number": "5",
+      "name": "Gabriel Bortoleto",
+      "abbreviation": "BOR",
+      "team": "Kick Sauber"
+    },
+    {
+      "number": "55",
+      "name": "Carlos Sainz",
+      "abbreviation": "SAI",
+      "team": "Williams"
+    },
+    {
+      "number": "6",
+      "name": "Isack Hadjar",
+      "abbreviation": "HAD",
+      "team": "Racing Bulls"
+    },
+    {
+      "number": "63",
+      "name": "George Russell",
+      "abbreviation": "RUS",
+      "team": "Mercedes"
+    },
+    {
+      "number": "7",
+      "name": "Jack Doohan",
+      "abbreviation": "DOO",
+      "team": "Alpine"
+    },
+    {
+      "number": "81",
+      "name": "Oscar Piastri",
+      "abbreviation": "PIA",
+      "team": "McLaren"
+    },
+    {
+      "number": "87",
+      "name": "Oliver Bearman",
+      "abbreviation": "BEA",
+      "team": "Haas F1 Team"
+    }
+  ]
+}
