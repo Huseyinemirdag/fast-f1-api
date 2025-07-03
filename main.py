@@ -8,6 +8,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
 import time
 from fastapi.staticfiles import StaticFiles
+import os
 
 app = FastAPI()
 
@@ -134,39 +135,12 @@ def get_race_drivers(season: int, round: int):
 
 @app.get("/drivers/{season}")
 def get_drivers(season: int):
-    try:
-        schedule = fastf1.get_event_schedule(season)
-        all_drivers = set()
-        for _, row in schedule.iterrows():
-            if row.get("EventFormat") not in ["conventional", "sprint"]:
-                continue
-            try:
-                event = fastf1.get_session(season, int(row["RoundNumber"]), "R")
-                event.load()
-                results = event.results
-                if results is not None:
-                    for _, driver_row in results.iterrows():
-                        all_drivers.add((driver_row["DriverNumber"], driver_row["FullName"], driver_row["Abbreviation"], driver_row["TeamName"]))
-            except Exception:
-                continue
-        drivers = [
-            {
-                "number": d[0],
-                "name": d[1],
-                "abbreviation": d[2],
-                "team": d[3]
-            } for d in sorted(all_drivers, key=lambda x: x[0])
-        ]
-        if not drivers:
-            raise HTTPException(status_code=404, detail="Sürücü verisi bulunamadı.")
-        # JSON dosyasına kaydet
-        with open(f"drivers_{season}.json", "w", encoding="utf-8") as f:
-            json.dump({"season": season, "drivers": drivers}, f, ensure_ascii=False, indent=2)
-        return {"season": season, "drivers": drivers}
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+    json_path = f"drivers_{season}.json"
+    if os.path.exists(json_path):
+        with open(json_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    else:
+        raise HTTPException(status_code=404, detail="Sürücü verisi bulunamadı.")
 
 @app.get("/constructors/{season}")
 def get_constructors(season: int):
