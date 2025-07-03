@@ -1,0 +1,7 @@
+fastapi
+fastf1
+uvicorn
+selenium
+requests
+python-multipart
+pydantic
