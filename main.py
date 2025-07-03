@@ -11,6 +11,7 @@ from fastapi.staticfiles import StaticFiles
 import os
 import matplotlib.pyplot as plt
 import io
+from bs4 import BeautifulSoup
 
 app = FastAPI()
 
@@ -570,4 +571,29 @@ def get_2024_sprint_results():
                 "event": event_name,
                 "error": str(e)
             })
-    return {"season": season, "sprints": all_sprints} 
+    return {"season": season, "sprints": all_sprints}
+
+@app.get("/scrape-race-schedule/{year}")
+def scrape_race_schedule(year: int):
+    try:
+        url = f"https://www.formula1.com/en/racing/{year}.html"
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, "lxml")
+
+        races = []
+        for event in soup.select(".event-item-wrapper"):
+            name_tag = event.select_one(".event-title .event-title-text")
+            date_tag = event.select_one(".event-date .date")
+            name = name_tag.get_text(strip=True) if name_tag else "?"
+            date = date_tag.get_text(strip=True) if date_tag else "?"
+            # Saat bilgisi genellikle 'Race' oturumu altında
+            time_tag = event.select_one(".event-session-list .session-item--race .session-time")
+            time = time_tag.get_text(strip=True) if time_tag else "Saat bilgisi yok"
+            races.append({
+                "name": name,
+                "date": date,
+                "time": time
+            })
+        return {"year": year, "races": races}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e)) 

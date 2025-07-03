@@ -6,3 +6,5 @@ requests
 python-multipart
 pydantic
 matplotlib
+beautifulsoup4
+lxml
