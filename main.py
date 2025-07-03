@@ -1,7 +1,7 @@
 from fastapi import FastAPI, HTTPException
 import fastf1
 import json
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 import requests
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -9,6 +9,8 @@ from selenium.webdriver.chrome.options import Options
 import time
 from fastapi.staticfiles import StaticFiles
 import os
+import matplotlib.pyplot as plt
+import io
 
 app = FastAPI()
 
@@ -425,115 +427,25 @@ def get_constructor_standings_local(season: int):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-@app.get("/races/{season}/{round}/lap-times/{driver}")
-def get_lap_times(season: int, round: int, driver: str):
+@app.get("/track-map/{season}/{round}")
+def get_track_map(season: int, round: int):
     try:
         session = fastf1.get_session(season, round, "R")
         session.load()
-        laps = session.laps.pick_driver(driver)
-        if laps.empty:
-            raise HTTPException(status_code=404, detail="Tur zamanı verisi bulunamadı.")
-        lap_times = []
-        for _, row in laps.iterrows():
-            lap_times.append({
-                "lap_number": int(row["LapNumber"]),
-                "lap_time": str(row["LapTime"]),
-                "position": int(row["Position"]),
-                "pit": bool(row["PitInLap"])
-            })
-        return {"season": season, "round": round, "driver": driver, "lap_times": lap_times}
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        coords = session.get_circuit_info().coordinates
+        if coords is None or len(coords) == 0:
+            raise HTTPException(status_code=404, detail="Pist haritası bulunamadı.")
 
-@app.get("/races/{season}/{round}/sector-times/{driver}")
-def get_sector_times(season: int, round: int, driver: str):
-    try:
-        session = fastf1.get_session(season, round, "R")
-        session.load()
-        laps = session.laps.pick_driver(driver)
-        if laps.empty:
-            raise HTTPException(status_code=404, detail="Sektör zamanı verisi bulunamadı.")
-        sector_times = []
-        for _, row in laps.iterrows():
-            sector_times.append({
-                "lap_number": int(row["LapNumber"]),
-                "sector1": str(row["Sector1Time"]),
-                "sector2": str(row["Sector2Time"]),
-                "sector3": str(row["Sector3Time"])
-            })
-        return {"season": season, "round": round, "driver": driver, "sector_times": sector_times}
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
+        fig, ax = plt.subplots()
+        ax.plot(coords[:, 0], coords[:, 1], color='black')
+        ax.set_aspect('equal')
+        ax.axis('off')
 
-@app.get("/races/{season}/{round}/tyres/{driver}")
-def get_tyre_data(season: int, round: int, driver: str):
-    try:
-        session = fastf1.get_session(season, round, "R")
-        session.load()
-        laps = session.laps.pick_driver(driver)
-        if laps.empty or "Stint" not in laps.columns:
-            raise HTTPException(status_code=404, detail="Lastik verisi bulunamadı.")
-        tyre_data = []
-        for _, row in laps.iterrows():
-            tyre_data.append({
-                "lap_number": int(row["LapNumber"]),
-                "compound": row.get("Compound", None),
-                "stint": int(row.get("Stint", 0)),
-                "fresh": bool(row.get("FreshTyre", False))
-            })
-        return {"season": season, "round": round, "driver": driver, "tyre_data": tyre_data}
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/races/{season}/{round}/weather")
-def get_weather_data(season: int, round: int):
-    try:
-        session = fastf1.get_session(season, round, "R")
-        session.load()
-        weather = session.weather_data
-        if weather is None or weather.empty:
-            raise HTTPException(status_code=404, detail="Hava durumu verisi bulunamadı.")
-        weather_list = []
-        for _, row in weather.iterrows():
-            weather_list.append({
-                "time": str(row["Time"]),
-                "air_temp": float(row["AirTemp"]),
-                "track_temp": float(row["TrackTemp"]),
-                "humidity": float(row["Humidity"]),
-                "rainfall": float(row["Rainfall"]),
-                "wind_speed": float(row["WindSpeed"]),
-                "wind_direction": float(row["WindDirection"])
-            })
-        return {"season": season, "round": round, "weather": weather_list}
-    except HTTPException as e:
-        raise e
-    except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/races/{season}/{round}/events")
-def get_race_events(season: int, round: int):
-    try:
-        session = fastf1.get_session(season, round, "R")
-        session.load()
-        messages = session.race_control_messages
-        if messages is None or messages.empty:
-            raise HTTPException(status_code=404, detail="Yarış olayı verisi bulunamadı.")
-        events = []
-        for _, row in messages.iterrows():
-            events.append({
-                "time": str(row["UTC"]),
-                "category": row.get("Category", None),
-                "message": row.get("Message", None)
-            })
-        return {"season": season, "round": round, "events": events}
-    except HTTPException as e:
-        raise e
+        buf = io.BytesIO()
+        plt.savefig(buf, format='png', bbox_inches='tight', pad_inches=0)
+        plt.close(fig)
+        buf.seek(0)
+        return Response(content=buf.read(), media_type="image/png")
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

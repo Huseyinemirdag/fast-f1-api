@@ -5,3 +5,4 @@ selenium
 requests
 python-multipart
 pydantic
+matplotlib
